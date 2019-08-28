@@ -1,5 +1,5 @@
-const shortId = require('shortid');
-|
+
+import shortId from 'shortid';
 export default class Socket {
   constructor(col) {
 
@@ -15,7 +15,6 @@ export default class Socket {
         // logger.info(`session disconnected: test`);
       });
     });
-    Socket.checkRoomChanges();
     return io;
   }
 
