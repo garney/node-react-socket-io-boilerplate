@@ -1,9 +1,10 @@
 require('babel-register');
 import Socket from './server-src/socket';
 import Routes from './server-src/routes';
+import configuration from './configuration';
 const express = require('express');
 
-const PORT = process.env.PORT || 6001;
+const PORT = process.env.PORT || configuration.PORT;
 const app = express();
 const server = require('http').createServer(app);
 

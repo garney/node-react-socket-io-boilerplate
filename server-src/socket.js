@@ -14,6 +14,14 @@ export default class Socket {
       socket.on('disconnect', function(){
         // logger.info(`session disconnected: test`);
       });
+
+      socket.on('roll', (num) => {
+        const dice = [];
+        for(let i = 0; i < num; i++) {
+          dice.push(Math.ceil(Math.random()*6))
+        }
+        socket.emit('rolled', dice)
+      })
     });
     return io;
   }

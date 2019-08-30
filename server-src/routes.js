@@ -4,9 +4,10 @@ const path = require('path');
 const express = require('express');
 const shortId = require('shortid');
 const queryParser = require('express-query-parser');
+const configuration = require('../configuration');
 
-const SOCKET_PORT = 6001;
-const SOCKET_URL = process.env.SOCKET_URL || ':6001';
+const SOCKET_PORT = configuration.PORT;
+const SOCKET_URL = process.env.SOCKET_URL || configuration.SOCKET_URL;
 
 export default class Routes {
   static init(app) {

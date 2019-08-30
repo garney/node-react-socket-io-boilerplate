@@ -47911,17 +47911,47 @@ function () {
   function Socket(url) {
     _classCallCheck(this, Socket);
 
-    this.socket = (0, _socket.default)(url);
+    this.connection = (0, _socket.default)(url);
     this.defineListeners();
+    this.listeners = {};
   }
 
   _createClass(Socket, [{
-    key: "defineListeners",
-    value: function defineListeners() {
+    key: "on",
+    value: function on(event, callback) {
+      var eventHandlers = this.listeners[event] || [];
+      eventHandlers.push(callback);
+      this.listeners[event] = eventHandlers;
+    }
+  }, {
+    key: "dispatchEvent",
+    value: function dispatchEvent(event) {
       var _this = this;
 
-      this.socket.on('connected', function (e) {
-        _this.connected(e);
+      for (var _len = arguments.length, params = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+        params[_key - 1] = arguments[_key];
+      }
+
+      var self = this;
+      return new Promise(function () {
+        var eventHandlers = _this.listeners[event] || [];
+        eventHandlers.forEach(function (callback) {
+          callback.apply(null, params);
+        });
+      });
+    }
+  }, {
+    key: "defineListeners",
+    value: function defineListeners() {
+      var _this2 = this;
+
+      this.connection.on('connected', function (e) {
+        _this2.status = 'connected';
+        _this2.id = e;
+
+        _this2.dispatchEvent('connected', e);
+
+        _this2.connected(e);
       });
     }
   }, {
@@ -47937,7 +47967,91 @@ function () {
 
 var _default = Socket;
 exports.default = _default;
-},{"socket.io-client":"../node_modules/socket.io-client/lib/index.js"}],"app.js":[function(require,module,exports) {
+},{"socket.io-client":"../node_modules/socket.io-client/lib/index.js"}],"../node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
+var bundleURL = null;
+
+function getBundleURLCached() {
+  if (!bundleURL) {
+    bundleURL = getBundleURL();
+  }
+
+  return bundleURL;
+}
+
+function getBundleURL() {
+  // Attempt to find the URL of the current script and use that as the base URL
+  try {
+    throw new Error();
+  } catch (err) {
+    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
+
+    if (matches) {
+      return getBaseURL(matches[0]);
+    }
+  }
+
+  return '/';
+}
+
+function getBaseURL(url) {
+  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
+}
+
+exports.getBundleURL = getBundleURLCached;
+exports.getBaseURL = getBaseURL;
+},{}],"../node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
+var bundle = require('./bundle-url');
+
+function updateLink(link) {
+  var newLink = link.cloneNode();
+
+  newLink.onload = function () {
+    link.remove();
+  };
+
+  newLink.href = link.href.split('?')[0] + '?' + Date.now();
+  link.parentNode.insertBefore(newLink, link.nextSibling);
+}
+
+var cssTimeout = null;
+
+function reloadCSS() {
+  if (cssTimeout) {
+    return;
+  }
+
+  cssTimeout = setTimeout(function () {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+
+    for (var i = 0; i < links.length; i++) {
+      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
+        updateLink(links[i]);
+      }
+    }
+
+    cssTimeout = null;
+  }, 50);
+}
+
+module.exports = reloadCSS;
+},{"./bundle-url":"../node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"app.scss":[function(require,module,exports) {
+var reloadCSS = require('_css_loader');
+
+module.hot.dispose(reloadCSS);
+module.hot.accept(reloadCSS);
+},{"_css_loader":"../node_modules/parcel-bundler/src/builtins/css-loader.js"}],"assets/dice/1.svg":[function(require,module,exports) {
+module.exports = "/1.34293ae4.svg";
+},{}],"assets/dice/2.svg":[function(require,module,exports) {
+module.exports = "/2.b68199e4.svg";
+},{}],"assets/dice/3.svg":[function(require,module,exports) {
+module.exports = "/3.a152a43e.svg";
+},{}],"assets/dice/4.svg":[function(require,module,exports) {
+module.exports = "/4.542beab3.svg";
+},{}],"assets/dice/5.svg":[function(require,module,exports) {
+module.exports = "/5.e6b087d1.svg";
+},{}],"assets/dice/6.svg":[function(require,module,exports) {
+module.exports = "/6.52bb2a91.svg";
+},{}],"dice.js":[function(require,module,exports) {
 "use strict";
 
 var _react = _interopRequireWildcard(require("react"));
@@ -47946,24 +48060,173 @@ var _config = _interopRequireDefault(require("./config"));
 
 var _index = _interopRequireDefault(require("./socket/index"));
 
+require("./app.scss");
+
+var _ = _interopRequireDefault(require("./assets/dice/1.svg"));
+
+var _2 = _interopRequireDefault(require("./assets/dice/2.svg"));
+
+var _3 = _interopRequireDefault(require("./assets/dice/3.svg"));
+
+var _4 = _interopRequireDefault(require("./assets/dice/4.svg"));
+
+var _5 = _interopRequireDefault(require("./assets/dice/5.svg"));
+
+var _6 = _interopRequireDefault(require("./assets/dice/6.svg"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
 
-function App(_ref) {
-  var env = _ref.env;
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function Dice(_ref) {
+  var socket = _ref.socket;
+
+  var _useState = (0, _react.useState)([1]),
+      _useState2 = _slicedToArray(_useState, 2),
+      diceNumbers = _useState2[0],
+      setDiceNumbers = _useState2[1];
+
+  var _useState3 = (0, _react.useState)(1),
+      _useState4 = _slicedToArray(_useState3, 2),
+      diceCount = _useState4[0],
+      setDiceCount = _useState4[1];
+
+  (0, _react.useEffect)(function () {
+    if (socket.id) {
+      socket.connection.on('rolled', function (diceNumbers) {
+        setDiceNumbers(diceNumbers);
+      });
+    }
+  }, [socket]);
+
+  var dice = function dice(num) {
+    var image;
+
+    switch (num) {
+      case 1:
+        image = _.default;
+        break;
+
+      case 2:
+        image = _2.default;
+        break;
+
+      case 3:
+        image = _3.default;
+        break;
+
+      case 4:
+        image = _4.default;
+        break;
+
+      case 5:
+        image = _5.default;
+        break;
+
+      case 6:
+        image = _6.default;
+        break;
+    }
+
+    return _react.default.createElement("span", {
+      className: "dice"
+    }, _react.default.createElement("img", {
+      src: image
+    }));
+  };
+
+  return _react.default.createElement("div", null, _react.default.createElement("h1", null, "Dice"), _react.default.createElement("div", null, diceNumbers.map(function (num, idx) {
+    return _react.default.createElement("span", {
+      key: "".concat(idx, "-").concat(num)
+    }, dice(num));
+  })), _react.default.createElement("div", null, _react.default.createElement("input", {
+    placeholder: "Number of dice",
+    defaultValue: diceCount,
+    onChange: function onChange(e) {
+      var count = parseInt(e.currentTarget.value) || 1;
+      setDiceCount(count);
+    }
+  }), _react.default.createElement("button", {
+    onClick: function onClick() {
+      socket.connection.emit('roll', diceCount);
+    }
+  }, "Roll")));
+}
+
+module.exports = Dice;
+},{"react":"../node_modules/react/index.js","./config":"config.js","./socket/index":"socket/index.js","./app.scss":"app.scss","./assets/dice/1.svg":"assets/dice/1.svg","./assets/dice/2.svg":"assets/dice/2.svg","./assets/dice/3.svg":"assets/dice/3.svg","./assets/dice/4.svg":"assets/dice/4.svg","./assets/dice/5.svg":"assets/dice/5.svg","./assets/dice/6.svg":"assets/dice/6.svg"}],"app.js":[function(require,module,exports) {
+"use strict";
+
+var _react = _interopRequireWildcard(require("react"));
+
+var _config = _interopRequireDefault(require("./config"));
+
+var _index = _interopRequireDefault(require("./socket/index"));
+
+require("./app.scss");
+
+var _dice = _interopRequireDefault(require("./dice"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
+
+function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function App() {
+  var _useState = (0, _react.useState)({}),
+      _useState2 = _slicedToArray(_useState, 2),
+      socket = _useState2[0],
+      setSocket = _useState2[1];
+
+  var _useState3 = (0, _react.useState)({}),
+      _useState4 = _slicedToArray(_useState3, 2),
+      connectionDetails = _useState4[0],
+      setConnectionDetails = _useState4[1];
+
   (0, _react.useEffect)(function () {
     _config.default.getConfig().then(function (config) {
       if (config.socketUrl) {
-        var socket = new _index.default(config.socketUrl);
+        var _socket = new _index.default(config.socketUrl);
+
+        _socket.on('connected', function (id) {
+          setConnectionDetails({
+            id: id,
+            status: _socket.status
+          });
+        });
+
+        setSocket(_socket);
       }
     });
   }, []);
-  return _react.default.createElement("div", null, "Hello App", JSON.stringify(env));
+  return _react.default.createElement("div", {
+    className: "app"
+  }, _react.default.createElement("div", null, _react.default.createElement("span", {
+    className: "status"
+  }, connectionDetails.status), " with connection ID ", _react.default.createElement("span", {
+    className: "id"
+  }, connectionDetails.id)), _react.default.createElement(_dice.default, {
+    socket: socket
+  }));
 }
 
 module.exports = App;
-},{"react":"../node_modules/react/index.js","./config":"config.js","./socket/index":"socket/index.js"}],"index.js":[function(require,module,exports) {
+},{"react":"../node_modules/react/index.js","./config":"config.js","./socket/index":"socket/index.js","./app.scss":"app.scss","./dice":"dice.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 require("babel-polyfill");
@@ -48018,7 +48281,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "52466" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55683" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
