@@ -1,11 +1,11 @@
 {
-  "name": "g-session",
+  "name": "application",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "start": "nodemon start.js",
-    "build": "parcel build src/index.js -d public/",
+    "build": "parcel build web-src/index.js -d public/",
     "parcel-watch": "parcel watch web-src/index.js -d public/",
     "watch": "run-p start parcel-watch"
   },
