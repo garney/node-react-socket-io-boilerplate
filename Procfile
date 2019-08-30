@@ -1,1 +1,1 @@
-web: node app-protect.js
+web: node start.js

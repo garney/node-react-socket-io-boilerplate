@@ -11,7 +11,7 @@ if(!url) {
 
 
 // Database Name
-dbName = 'heroku_k52dgw4p';
+dbName = 'dbname';
 
 // Create a new MongoClient
 const client = new MongoClient(url, {

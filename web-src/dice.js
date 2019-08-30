@@ -61,7 +61,7 @@ function Dice({socket}) {
                     ))
                 }
             </div>
-           
+
                <div>
                    <input
                        placeholder="Number of dice"
