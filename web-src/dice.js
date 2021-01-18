@@ -11,7 +11,7 @@ import dice4 from './assets/dice/4.svg';
 import dice5 from './assets/dice/5.svg';
 import dice6 from './assets/dice/6.svg';
 
-function Dice({socket}) {
+function Dice({socket = {}}) {
     const [diceNumbers, setDiceNumbers] = useState([1]);
     const [diceCount, setDiceCount] = useState(1);
 
@@ -21,7 +21,7 @@ function Dice({socket}) {
                 setDiceNumbers(diceNumbers)
             });
         }
-    }, [socket]);
+    }, [socket.id]);
     const dice = (num) => {
         let image;
         switch(num) {
