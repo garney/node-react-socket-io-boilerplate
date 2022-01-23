@@ -22,7 +22,6 @@ const init = (config) => {
                     document.getElementById('root'));
         }
     });
-   
 };
 
 Config.getConfig().then(config => {

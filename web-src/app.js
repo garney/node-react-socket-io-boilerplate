@@ -6,7 +6,6 @@ import './app.scss';
 import Dice from './dice';
 
 function App({socket,connectionId}) {
-    
     const [connectionDetails, setConnectionDetails] = useState({});
 
     useEffect(() => {
